@@ -11,12 +11,67 @@ datasource db {
   relationMode = "prisma"
 }
 
-model admin {
-  id        String @id @default(uuid())
+model Admin {
+  id        String   @id @default(uuid())
   name      String
   birthyear String
   contact   String
-  email     String @unique
-  username  String @unique
-  password  String @unique
+  email     String   @unique
+  username  String   @unique
+  password  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  name      String
+  birthyear String
+  contact   String
+  email     String   @unique
+  username  String   @unique
+  password  String   @unique
+  isCoAdmin Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Citizen {
+  id        String   @id @default(uuid())
+  name      String
+  birthyear String
+  contact   String
+  email     String   @unique
+  username  String   @unique
+  password  String   @unique
+  Report    Report[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Device {
+  id        String   @id @default(uuid())
+  serial    String
+  address   String
+  coords    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Alarm {
+  id       String   @id @default(uuid())
+  serial   String
+  datetime DateTime @default(now())
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  address     String
+  description String?  @db.Text
+  image       String?
+  datetime    DateTime @default(now())
+  citizenID   String
+  citizen     Citizen  @relation(fields: [citizenID], references: [id])
+
+  @@index([citizenID])
 }
