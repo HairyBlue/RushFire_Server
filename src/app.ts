@@ -1,32 +1,18 @@
 import express, {Express, Request, Response, NextFunction} from "express";
-import CutomeError from "./utils/CustomeError"
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import CutomeError from "./utils/ExpressError"
 const app: Express = express()
+import { SignUp, Profile, Login } from "./controllers/admin";
 
-async function main() {
-  await prisma.admin.create({
-        data: {
-            name: "This is me"
-      }
-  })
-}
+app.use(express.json());   
+app.use(express.urlencoded({extended: true}));
 
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
-
-
+//Tempprary router
 app.get("/", async(req: Request, res: Response) => {
-    const name = await prisma.admin.findMany()
-    res.json({data: name})
+    res.json({data: "This is first path"})
 })
+app.get("/profile", Profile)
+app.post("/signup", SignUp)
+app.post("/login", Login)
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
     next(new  CutomeError(404, "Page not found"))

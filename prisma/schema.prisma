@@ -12,6 +12,11 @@ datasource db {
 }
 
 model admin {
-  id String @id @default(uuid())
-  name String
+  id        String @id @default(uuid())
+  name      String
+  birthyear String
+  contact   String
+  email     String @unique
+  username  String @unique
+  password  String @unique
 }
