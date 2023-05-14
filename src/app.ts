@@ -1,5 +1,5 @@
 import express, {Express, Request, Response, NextFunction} from "express";
-import CutomeError from "./utils/ExpressError"
+import ExpressError from "./utils/ExpressError"
 import adminroute from "./router/admin";
 const app: Express = express()
 
@@ -10,9 +10,9 @@ app.use(express.urlencoded({extended: true}));
 app.use("/admin", adminroute)
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
-    next(new  CutomeError(404, "Page not found"))
+    next(new  ExpressError(404, "Page not found"))
 })
-app.use((err: CutomeError, req: Request, res: Response, next: NextFunction) => {
+app.use((err: ExpressError, req: Request, res: Response, next: NextFunction) => {
     err.status = err.status || 500
     if (!err.message) err.message = "Oh no something went wrong"
     res.status(err.status).json({ error: err.message })
