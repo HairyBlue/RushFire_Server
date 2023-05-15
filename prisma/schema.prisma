@@ -21,6 +21,8 @@ model Admin {
   password  String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([email, username])
 }
 
 model Team {
@@ -34,6 +36,8 @@ model Team {
   isCoAdmin Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([email, username])
 }
 
 model Citizen {
@@ -47,6 +51,8 @@ model Citizen {
   Report    Report[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([email, username])
 }
 
 model Device {
@@ -56,6 +62,8 @@ model Device {
   coords    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+   @@index([serial])
 }
 
 model Alarm {

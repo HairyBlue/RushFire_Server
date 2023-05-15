@@ -1,14 +1,37 @@
-import express, {Express, Request, Response, NextFunction} from "express";
+import express, { Express, Request, Response, NextFunction } from "express";
+import http from "http"
 import ExpressError from "./utils/ExpressError"
-import adminroute from "./router/admin";
+import compression from "compression"
+import cors from "cors"
+import adminroute from "./router/admin"
+import { PrismaClient } from '@prisma/client'
 const app: Express = express()
+const server = http.createServer(app)
+const prisma = new PrismaClient()
 
+// app.disable('x-powered-by');
+app.use(compression())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}))
 app.use(express.json());   
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 //Admin Route
 app.use("/admin", adminroute)
 
+app.delete("/delete-admin",async (req: Request, res: Response) => {
+    await prisma.admin.deleteMany()
+    res.status(200).json({success_message: "Deleted Admin"})
+})
+app.get("/admin-profile", async (req: Request, res: Response) => {
+    console.time('time')
+   const data = await prisma.admin.findMany()
+    res.status(200).json({ result: data })
+    console.timeEnd('time')
+})
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
     next(new  ExpressError(404, "Page not found"))
 })
@@ -18,4 +41,4 @@ app.use((err: ExpressError, req: Request, res: Response, next: NextFunction) => 
     res.status(err.status).json({ error: err.message })
 })
 const PORT = 3000;
-app.listen(PORT, () => console.log(`listening on port ${PORT}`))
+server.listen(PORT, () => console.log(`listening on port ${PORT}`))
