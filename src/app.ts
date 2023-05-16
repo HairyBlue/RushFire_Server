@@ -2,6 +2,7 @@ import express, { Express, Request, Response, NextFunction } from "express";
 import http from "http"
 import ExpressError from "./utils/ExpressError"
 import compression from "compression"
+import helmet from "helmet"
 import cors from "cors"
 import adminroute from "./router/admin"
 import { PrismaClient } from '@prisma/client'
@@ -10,11 +11,11 @@ const server = http.createServer(app)
 const prisma = new PrismaClient()
 
 // app.disable('x-powered-by');
+app.use(helmet())
 app.use(compression())
 app.use(cors({
     origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
 }))
 app.use(express.json());   
 app.use(express.urlencoded({ extended: true }));

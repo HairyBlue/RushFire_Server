@@ -57,19 +57,21 @@ model Citizen {
 
 model Device {
   id        String   @id @default(uuid())
-  serial    String
+  serial    String   @unique
   address   String
   coords    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-   @@index([serial])
+  @@index([serial])
 }
 
 model Alarm {
   id       String   @id @default(uuid())
   serial   String
   datetime DateTime @default(now())
+
+  @@index([datetime])
 }
 
 model Report {
@@ -81,5 +83,5 @@ model Report {
   citizenID   String
   citizen     Citizen  @relation(fields: [citizenID], references: [id])
 
-  @@index([citizenID])
+  @@index([citizenID, datetime])
 }
