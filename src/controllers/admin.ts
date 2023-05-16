@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express"
 import { PrismaClient } from '@prisma/client'
 import bcrypt from "bcrypt"
-import jwt, {Secret} from "jsonwebtoken"
+import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
+import { resultByYear, resultCurrentYear } from "./result-by-year"
 import ExpressError from "../utils/ExpressError"
 dotenv.config()
 const prisma = new PrismaClient()
@@ -35,15 +36,17 @@ const DashboardData =async (req: Request, res: Response, next: NextFunction) => 
             prisma.report.count()
         ]
     )
+    const alarmPostFinal = resultCurrentYear(alarmPost)
+    const reportPostFinal = resultCurrentYear(reportPost)
     res.status(200).json({
         results:{
             alarm:{
-                alarmPost: alarmPost,
+                alarmPost: alarmPostFinal,
                 alarmTake10: alarmTake10,
                 alarmCount: alarmCount
             },
             report: {
-                reportPost: reportPost,
+                reportPost: reportPostFinal,
                 reportTake10: reportTake10,
                 reportCount: reportCount
             }
@@ -63,10 +66,10 @@ const OverviewDevice =async (req: Request, res: Response, next: NextFunction) =>
         ]
     )
     const pageCount = Math.ceil(deviceCount/perPage)
-
+    const devicePostFinal = resultByYear(devicePost, year as string)
     res.status(200).json({
         retults: {
-            devicePost: devicePost, 
+            devicePost: devicePostFinal, 
             deviceTake20: deviceTake20, 
             deviceCount: deviceCount, 
             pageCount: pageCount
