@@ -57,7 +57,7 @@ model Citizen {
 
 model Device {
   id        String   @id @default(uuid())
-  serial    String   @unique
+  serial    String
   address   String
   coords    String
   createdAt DateTime @default(now())

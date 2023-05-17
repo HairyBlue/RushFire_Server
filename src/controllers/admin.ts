@@ -76,16 +76,16 @@ const OverviewDevice =async (req: Request, res: Response, next: NextFunction) =>
         }})
 }
 const ManageDeviceRequest =async (req: Request, res: Response, next: NextFunction) => {
-    const {page, order} = req.query;
+    const {page, order, searches} = req.query;
     const perPage = 20
     const toSkip = (parseInt(page as string) - 1) * perPage
     let devicePost;
     //default order -> desc
     if(order == "desc"){
-         devicePost = await prisma.device.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "desc"}})
+         devicePost = await prisma.device.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "desc"}, where: {serial: {contains: `${searches}%`}}})
     }
      if(order == "asc"){
-         devicePost = await prisma.device.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "asc"}})
+         devicePost = await prisma.device.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "asc"}, where: {serial: {contains: `${searches}%`}}})
     }
     const deviceCount = await prisma.device.count()
     const pageCount = Math.ceil(deviceCount/perPage)
@@ -99,7 +99,7 @@ const ManageDeviceRequest =async (req: Request, res: Response, next: NextFunctio
 
 //Alarm
 const OverviewAlarm =async (req: Request, res: Response, next: NextFunction) => {
-    const page = req.query.page;
+    const {page, year}= req.query;
     const perPage = 20
     const toSkip = (parseInt(page as string) - 1) * perPage
     const [alarmPost, alarmTake20, alarmCount] = await prisma.$transaction(
@@ -110,25 +110,26 @@ const OverviewAlarm =async (req: Request, res: Response, next: NextFunction) => 
         ]
     )
     const pageCount = Math.ceil(alarmCount/perPage)
+    const alarmPostFinal = resultByYear(alarmPost, year as string)
     res.status(200).json({
         retults: {
-            alarmPost: alarmPost, 
+            alarmPost: alarmPostFinal, 
             alarmTake20: alarmTake20, 
             alarmCount: alarmCount, 
             pageCount: pageCount
         }})
 }
 const ManageAlarmRequest =async (req: Request, res: Response, next: NextFunction) => {
-    const {page, order} = req.query;
+    const {page, order, searches} = req.query;
     const perPage = 20
     const toSkip = (parseInt(page as string) - 1) * perPage
     let alarmPost;
     //default order -> desc
     if(order == "desc"){
-         alarmPost = await prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "desc"}})
+         alarmPost = await prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "desc"},  where: {serial: {contains: `${searches}%`}}})
     }
     if(order == "asc"){
-         alarmPost = await prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "asc"}})
+         alarmPost = await prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "asc"},  where: {serial: {contains: `${searches}%`}}})
     }
    
     const alarmCount = await prisma.alarm.count()
@@ -142,16 +143,16 @@ const ManageAlarmRequest =async (req: Request, res: Response, next: NextFunction
 }
 
 const Citizen =async (req: Request, res: Response, next: NextFunction) => {
-    const {page, order} = req.query as any;
+    const {page, order, searches} = req.query as any;
     const perPage = 20
     const toSkip = (parseInt(page) - 1) * perPage
     let citizenPost;
     //default order -> desc
     if(order == "desc"){
-         citizenPost = await prisma.citizen.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "desc"}})
+         citizenPost = await prisma.citizen.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "desc"}, where: {name: {contains: `${searches}%`}}})
     }
    if(order == "asc"){
-        citizenPost = await prisma.citizen.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "asc"}})
+        citizenPost = await prisma.citizen.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "asc"}, where: {name: {contains: `${searches}%`}}})
    }
     const citizenCount = await prisma.citizen.count()
     const pageCount = Math.ceil(citizenCount/perPage)
@@ -223,10 +224,6 @@ const Login = async (req: Request, res: Response, next: NextFunction) => {
 
 const RegisterDevice = async (req: Request, res: Response, next: NextFunction) => {
     const {serial, address, coords} = req.body
-    const isexist = await prisma.device.findUnique({where: {serial: serial}})
-    if(isexist){
-        return next(new ExpressError(400, "Device already register"))
-    }
     await prisma.device.create({
         data: {
             serial: serial,
