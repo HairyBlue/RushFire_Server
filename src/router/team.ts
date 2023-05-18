@@ -15,12 +15,8 @@ import {
     DeleteCitizen,
     DeleteTeam,
     OverviewAlarm,
-    ManageAlarmRequest,
-    TeamToCoAdmin,
-    OverviewReport,
-    ManageReportRequest,
-    DeleteReport
-} from "../controllers/admin"
+    ManageAlarmRequest
+} from "../controllers/team"
 import verifyJWT from "../middleware"
 const router: Router = express.Router()
 //GET
@@ -30,8 +26,7 @@ router.get("/overview-device", CatchAsync(OverviewDevice))
 router.get("/manage-device", CatchAsync(ManageDeviceRequest))
 router.get("/overview-alarm", CatchAsync(OverviewAlarm))
 router.get("/manage-alarm", CatchAsync(ManageAlarmRequest))
-router.get("/overview-report", CatchAsync(OverviewReport))
-router.get("/manage-report", CatchAsync(ManageReportRequest))
+
 //POST
 router.post("/signup", CatchAsync(SignUp))
 router.post("/login", CatchAsync(Login))
@@ -40,11 +35,10 @@ router.post("/register-device", verifyJWT, CatchAsync(RegisterDevice))
 //PUT
 router.put("/profile", verifyJWT, CatchAsync(UpdateProfile))
 router.put("/device", verifyJWT, CatchAsync(UpdateDevice))
-router.put("/team-to-coadmin", verifyJWT, CatchAsync(TeamToCoAdmin))
+
 //DELETE
 router.delete("/device", verifyJWT, CatchAsync(DeleteDevice))
 router.delete("/alarm", verifyJWT, CatchAsync(DeleteAlarm))
 router.delete("/citizen", verifyJWT, CatchAsync(DeleteCitizen))
-router.delete("report", verifyJWT, CatchAsync(DeleteReport))
 router.delete("/team", verifyJWT, CatchAsync(DeleteTeam))
 export default router;
