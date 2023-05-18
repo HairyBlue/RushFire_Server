@@ -15,7 +15,7 @@ interface GetUserRequest extends Request {
 //GET REQUEST
 const Profile = async (req: Request, res: Response, next: NextFunction) => {
     const id = (req as GetUserRequest).user
-    const profile = await prisma.admin.findUnique({where: { id: id}})
+    const profile = await prisma.team.findUnique({where: { id: id}})
     res.status(200).json({
        results: profile
     })
@@ -68,7 +68,7 @@ const OverviewDevice =async (req: Request, res: Response, next: NextFunction) =>
     const pageCount = Math.ceil(deviceCount/perPage)
     const devicePostFinal = resultByYear(devicePost, year as string)
     res.status(200).json({
-        results: {
+        retults: {
             devicePost: devicePostFinal, 
             deviceTake20: deviceTake20, 
             deviceCount: deviceCount, 
@@ -90,7 +90,7 @@ const ManageDeviceRequest =async (req: Request, res: Response, next: NextFunctio
     const deviceCount = await prisma.device.count()
     const pageCount = Math.ceil(deviceCount/perPage)
     res.status(200).json({
-        results: {
+        retults: {
             devicePost: devicePost, 
             deviceCount: deviceCount, 
             pageCount: pageCount
@@ -112,7 +112,7 @@ const OverviewAlarm =async (req: Request, res: Response, next: NextFunction) => 
     const pageCount = Math.ceil(alarmCount/perPage)
     const alarmPostFinal = resultByYear(alarmPost, year as string)
     res.status(200).json({
-        results: {
+        retults: {
             alarmPost: alarmPostFinal, 
             alarmTake20: alarmTake20, 
             alarmCount: alarmCount, 
@@ -135,55 +135,9 @@ const ManageAlarmRequest =async (req: Request, res: Response, next: NextFunction
     const alarmCount = await prisma.alarm.count()
     const pageCount = Math.ceil(alarmCount/perPage)
     res.status(200).json({
-        results: {
+        retults: {
             alarmPost: alarmPost, 
             alarmCount: alarmCount, 
-            pageCount: pageCount
-        }})
-}
-
-//Report
-const OverviewReport =async (req: Request, res: Response, next: NextFunction) => {
-    const {page, year}= req.query;
-    const perPage = 20
-    const toSkip = (parseInt(page as string) - 1) * perPage
-    const [reportPost, reportTake20, reportCount] = await prisma.$transaction(
-        [
-            prisma.report.findMany({orderBy: {datetime: "asc"}}),
-            prisma.report.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "desc"}}),
-            prisma.report.count()
-        ]
-    )
-    const pageCount = Math.ceil(reportCount/perPage)
-    const reportPostFinal = resultByYear(reportPost, year as string)
-    res.status(200).json({
-        results: {
-            reportPost: reportPostFinal, 
-            reportTake20: reportTake20, 
-            reportCount: reportCount, 
-            pageCount: pageCount
-        }})
-}
-const ManageReportRequest =async (req: Request, res: Response, next: NextFunction) => {
-    const {page, order } = req.query;
-    const perPage = 20
-    const toSkip = (parseInt(page as string) - 1) * perPage
-    let reportPost: any;
-    //default order -> desc
-    if(order == "desc"){
-         reportPost = await prisma.report.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "desc"}})
-    }
-    if(order == "asc"){
-         reportPost = await prisma.report.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "asc"}})
-    }
-   
-    const reportCount = await prisma.alarm.count()
-    const pageCount = Math.ceil(reportCount/perPage)
-    console.log(JSON.parse(reportPost[0]?.image))
-    res.status(200).json({
-        results: {
-            reportPost: reportPost, 
-            reportCount: reportCount, 
             pageCount: pageCount
         }})
 }
@@ -203,7 +157,7 @@ const Citizen =async (req: Request, res: Response, next: NextFunction) => {
     const citizenCount = await prisma.citizen.count()
     const pageCount = Math.ceil(citizenCount/perPage)
     res.status(200).json({
-        results: {
+        retults: {
             citizenPost: citizenPost, 
             citizenCount: citizenCount, 
             pageCount: pageCount
@@ -224,7 +178,7 @@ const Team =async (req: Request, res: Response, next: NextFunction) => {
     const teamCount = await prisma.citizen.count()
     const pageCount = Math.ceil(teamCount/perPage)
     res.status(200).json({
-        results: {
+        retults: {
             citizenPost: teamPost, 
             citizenCount: teamCount, 
             pageCount: pageCount
@@ -232,11 +186,9 @@ const Team =async (req: Request, res: Response, next: NextFunction) => {
 }
 //POST REQUEST
 const SignUp = async (req: Request, res: Response, next: NextFunction) => {
-    const count = await prisma.admin.count()
-    if (count > 0) {return next(new ExpressError(400, "Admin account has already been created"))}
     const { name, birthyear, contact, email, username, password } = req.body
     const hashedpwd = await bcrypt.hash(password, 10)
-    await prisma.admin.create({
+    await prisma.team.create({
         data: {
             name: name,
             birthyear: birthyear,
@@ -247,12 +199,12 @@ const SignUp = async (req: Request, res: Response, next: NextFunction) => {
         }
     })
     res.status(200).json({
-        succes_message: "Admin account has succesfully created"
+        succes_message: "Account has succesfully created"
     })
 }
 const Login = async (req: Request, res: Response, next: NextFunction) => {
     const { usernameoremail, password } = req.body
-    const isexist = await prisma.admin.findMany({
+    const isexist = await prisma.team.findMany({
         where: {
             OR: [
                 { username: { equals: usernameoremail } },
@@ -263,7 +215,7 @@ const Login = async (req: Request, res: Response, next: NextFunction) => {
     if (isexist.length == 0) { return next(new ExpressError(400, "Invalid credendtials")) }
     const ispassword = await bcrypt.compare(password, isexist[0]?.password)
     if (!ispassword) { return next(new ExpressError(400, "Invalid credendtials")) }
-    const access_token = jwt.sign({id: isexist[0]?.id}, process.env.ACCESS_TOKEN as string)
+    const access_token = jwt.sign({id: isexist[0]?.id, isCoAdmin: isexist[0]?.isCoAdmin}, process.env.ACCESS_TOKEN as string)
 
     res.status(200).json({succes_message: "You have succesfully login", id: isexist[0]?.id, token: access_token})
 }
@@ -284,7 +236,7 @@ const UpdateProfile =async (req: Request, res: Response, next: NextFunction) => 
     const id = (req as GetUserRequest).user;
     const { name, birthyear, contact, email} = req.body
     
-    await prisma.admin.update({
+    await prisma.team.update({
         where: {
             id: id
         },
@@ -311,17 +263,6 @@ const UpdateDevice = async (req: Request, res: Response, next: NextFunction) => 
         }
     })
 }
-const TeamToCoAdmin =async (req: Request, res: Response, next: NextFunction) => {
-    const {id} = req.params
-    await prisma.team.update({
-        where: {
-            id: id
-        },
-        data: {
-            isCoAdmin: true
-        }
-    })
-}
 //DELETE
 const DeleteDevice = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
@@ -331,11 +272,6 @@ const DeleteDevice = async (req: Request, res: Response, next: NextFunction) => 
 const DeleteAlarm = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
     await prisma.alarm.delete({where: {id: id}})
-    res.status(200).json({success_message: "Succesfully deleted an alarm"})
-}
-const DeleteReport = async (req: Request, res: Response, next: NextFunction) => {
-    const {id} = req.params;
-    await prisma.report.delete({where: {id: id}})
     res.status(200).json({success_message: "Succesfully deleted an alarm"})
 }
 const DeleteCitizen =async (req: Request, res: Response, next: NextFunction) => {
@@ -357,8 +293,6 @@ export {
     ManageDeviceRequest,
     OverviewAlarm,
     ManageAlarmRequest,
-    OverviewReport,
-    ManageReportRequest,
     Citizen,
     Team,
     //POST
@@ -368,11 +302,9 @@ export {
     //PUT
     UpdateProfile,
     UpdateDevice,
-    TeamToCoAdmin,
     //DELETE
     DeleteDevice,
     DeleteAlarm,
     DeleteCitizen,
-    DeleteReport,
     DeleteTeam
 }
