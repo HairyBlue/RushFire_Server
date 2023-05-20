@@ -45,6 +45,6 @@ router.put("/team-to-coadmin", verifyJWT, CatchAsync(TeamToCoAdmin))
 router.delete("/device", verifyJWT, CatchAsync(DeleteDevice))
 router.delete("/alarm", verifyJWT, CatchAsync(DeleteAlarm))
 router.delete("/citizen", verifyJWT, CatchAsync(DeleteCitizen))
-router.delete("report", verifyJWT, CatchAsync(DeleteReport))
+router.delete("/report", verifyJWT, CatchAsync(DeleteReport))
 router.delete("/team", verifyJWT, CatchAsync(DeleteTeam))
 export default router;

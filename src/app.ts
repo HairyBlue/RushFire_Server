@@ -7,11 +7,12 @@ import cors from "cors"
 import adminroute from "./router/admin"
 import citizenroute from "./router/citizen"
 import { PrismaClient } from '@prisma/client'
+import setupSocketIO from "./config/socket"
 const app: Express = express()
 const server = http.createServer(app)
 const prisma = new PrismaClient()
+setupSocketIO(server)
 
-// app.disable('x-powered-by');
 app.use(helmet())
 app.use(compression())
 app.use(cors({
@@ -24,6 +25,16 @@ app.use(express.urlencoded({ extended: true }));
 //Admin Route
 app.use("/admin", adminroute)
 app.use("/user", citizenroute)
+
+app.get('/', (req: Request, res: Response) => {
+    res.sendFile(__dirname + '/index.html');
+  });
+app.get("/admin-profile", async (req: Request, res: Response) => {
+    console.time('time')
+   const data = await prisma.admin.findMany()
+    res.status(200).json({ result: data })
+    console.timeEnd('time')
+})
 app.delete("/delete-admin",async (req: Request, res: Response) => {
     await prisma.admin.deleteMany()
     res.status(200).json({success_message: "Deleted Admin"})
@@ -32,11 +43,9 @@ app.delete("/delete-reports",async (req: Request, res: Response) => {
     await prisma.report.deleteMany()
     res.status(200).json({success_message: "Deleted reports"})
 })
-app.get("/admin-profile", async (req: Request, res: Response) => {
-    console.time('time')
-   const data = await prisma.admin.findMany()
-    res.status(200).json({ result: data })
-    console.timeEnd('time')
+app.delete("/delete-alarms",async (req: Request, res: Response) => {
+    await prisma.alarm.deleteMany()
+    res.status(200).json({success_message: "Deleted alarm"})
 })
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
     next(new  ExpressError(404, "Page not found"))
@@ -46,5 +55,8 @@ app.use((err: ExpressError, req: Request, res: Response, next: NextFunction) => 
     if (!err.message) err.message = "Oh no something went wrong"
     res.status(err.status).json({ error: err.message })
 })
+
+
+
 const PORT = 3000;
 server.listen(PORT, () => console.log(`listening on port ${PORT}`))

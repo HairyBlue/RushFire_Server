@@ -16,8 +16,6 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APPID
 };
 
-
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app)

@@ -24,8 +24,8 @@ const Profile = async (req: Request, res: Response, next: NextFunction) => {
 const DashboardData =async (req: Request, res: Response, next: NextFunction) => {
     const [alarmPost, alarmTake10, alarmCount] = await prisma.$transaction(
         [
-            prisma.alarm.findMany({orderBy: {datetime: "asc"}}),
-            prisma.alarm.findMany({take: 10, orderBy: {datetime: "desc"}}),
+            prisma.alarm.findMany({orderBy: {createdAt: "asc"}}),
+            prisma.alarm.findMany({take: 10, orderBy: {createdAt: "desc"}}),
             prisma.alarm.count()
         ]
     )
@@ -104,8 +104,8 @@ const OverviewAlarm =async (req: Request, res: Response, next: NextFunction) => 
     const toSkip = (parseInt(page as string) - 1) * perPage
     const [alarmPost, alarmTake20, alarmCount] = await prisma.$transaction(
         [
-            prisma.alarm.findMany({orderBy: {datetime: "asc"}}),
-            prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "desc"}}),
+            prisma.alarm.findMany({orderBy: {createdAt: "asc"}}),
+            prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "desc"}}),
             prisma.alarm.count()
         ]
     )
@@ -126,10 +126,10 @@ const ManageAlarmRequest =async (req: Request, res: Response, next: NextFunction
     let alarmPost;
     //default order -> desc
     if(order == "desc"){
-         alarmPost = await prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "desc"},  where: {serial: {contains: `${searches}%`}}})
+         alarmPost = await prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "desc"},  where: {serial: {contains: `${searches}%`}}})
     }
     if(order == "asc"){
-         alarmPost = await prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {datetime: "asc"},  where: {serial: {contains: `${searches}%`}}})
+         alarmPost = await prisma.alarm.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "asc"},  where: {serial: {contains: `${searches}%`}}})
     }
    
     const alarmCount = await prisma.alarm.count()
@@ -232,14 +232,17 @@ const Team =async (req: Request, res: Response, next: NextFunction) => {
 }
 //POST REQUEST
 const SignUp = async (req: Request, res: Response, next: NextFunction) => {
+    type Gender = "Male" | "Female" | "Rather not to say"
     const count = await prisma.admin.count()
     if (count > 0) {return next(new ExpressError(400, "Admin account has already been created"))}
-    const { name, birthyear, contact, email, username, password } = req.body
+    const { name, birthyear, gender,contact, email, username, password } = req.body
+    const isGender: Gender = gender
     const hashedpwd = await bcrypt.hash(password, 10)
     await prisma.admin.create({
         data: {
             name: name,
             birthyear: birthyear,
+            gender: isGender,
             contact: contact,
             email: email,
             username: username,

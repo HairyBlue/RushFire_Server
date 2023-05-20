@@ -1,6 +1,6 @@
 import storage from "../firebase"
 // import firebaseApp from "firebase/app"
-import { ref, uploadBytes, getDownloadURL, getBlob} from "firebase/storage"
+import { ref, uploadBytes, getDownloadURL} from "firebase/storage"
 
 const imageupload =async (originalname: string, buffer: any) => { 
 

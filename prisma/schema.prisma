@@ -15,10 +15,11 @@ model Admin {
   id        String   @id @default(uuid())
   name      String
   birthyear String
+  gender    String
   contact   String
   email     String   @unique
   username  String   @unique
-  password  String   @unique
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -29,10 +30,11 @@ model Team {
   id        String   @id @default(uuid())
   name      String
   birthyear String
+  gender    String
   contact   String
   email     String   @unique
   username  String   @unique
-  password  String   @unique
+  password  String
   isCoAdmin Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -44,10 +46,11 @@ model Citizen {
   id        String   @id @default(uuid())
   name      String
   birthyear String
+  gender    String
   contact   String
   email     String   @unique
   username  String   @unique
-  password  String   @unique
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -66,11 +69,11 @@ model Device {
 }
 
 model Alarm {
-  id       String   @id @default(uuid())
-  serial   String
-  datetime DateTime @default(now())
+  id        String   @id @default(uuid())
+  serial    String
+  createdAt DateTime @default(now())
 
-  @@index([datetime])
+  @@index([createdAt])
 }
 
 model Report {

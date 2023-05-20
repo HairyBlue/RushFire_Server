@@ -13,11 +13,14 @@ import {
     DeleteDevice,
     DeleteAlarm,
     DeleteCitizen,
-    DeleteTeam,
     OverviewAlarm,
-    ManageAlarmRequest
+    ManageAlarmRequest,
+    OverviewReport,
+    ManageReportRequest,
+    DeleteReport
 } from "../controllers/team"
 import verifyJWT from "../middleware"
+
 const router: Router = express.Router()
 //GET
 router.get("/profile", verifyJWT, CatchAsync(Profile))
@@ -26,6 +29,8 @@ router.get("/overview-device", CatchAsync(OverviewDevice))
 router.get("/manage-device", CatchAsync(ManageDeviceRequest))
 router.get("/overview-alarm", CatchAsync(OverviewAlarm))
 router.get("/manage-alarm", CatchAsync(ManageAlarmRequest))
+router.get("/overview-report", CatchAsync(OverviewReport))
+router.get("/manage-report", CatchAsync(ManageReportRequest))
 
 //POST
 router.post("/signup", CatchAsync(SignUp))
@@ -39,6 +44,6 @@ router.put("/device", verifyJWT, CatchAsync(UpdateDevice))
 //DELETE
 router.delete("/device", verifyJWT, CatchAsync(DeleteDevice))
 router.delete("/alarm", verifyJWT, CatchAsync(DeleteAlarm))
+router.delete("/report", verifyJWT, CatchAsync(DeleteReport))
 router.delete("/citizen", verifyJWT, CatchAsync(DeleteCitizen))
-router.delete("/team", verifyJWT, CatchAsync(DeleteTeam))
 export default router;
