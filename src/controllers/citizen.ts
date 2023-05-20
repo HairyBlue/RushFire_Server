@@ -24,12 +24,15 @@ const Profile = async (req: Request, res: Response, next: NextFunction) => {
 
 //POST REQUEST
 const SignUp = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, birthyear, contact, email, username, password } = req.body
+    type Gender = "Male" | "Female" | "Rather not to say"
+    const { name, birthyear, gender, contact, email, username, password } = req.body
     const hashedpwd = await bcrypt.hash(password, 10)
+    const isGender: Gender = gender
     await prisma.citizen.create({
         data: {
             name: name,
             birthyear: birthyear,
+            gender: isGender,
             contact: contact,
             email: email,
             username: username,
