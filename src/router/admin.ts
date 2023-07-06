@@ -19,11 +19,13 @@ import {
     TeamToCoAdmin,
     OverviewReport,
     ManageReportRequest,
-    DeleteReport
+    DeleteReport,
+    GetAdmin
 } from "../controllers/admin"
 import verifyJWT from "../middleware"
 const router: Router = express.Router()
 //GET
+router.get("/getadmin", CatchAsync(GetAdmin))
 router.get("/profile", verifyJWT, CatchAsync(Profile))
 router.get("/dashboard", CatchAsync(DashboardData))
 router.get("/overview-device", CatchAsync(OverviewDevice))

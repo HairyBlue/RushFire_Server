@@ -2,6 +2,7 @@ const resultByYear = function (post: any, year: string) {
     const selecteddate: any[] = []
     const postFinal: number[] = []
 
+    //this will push the filtered year
     for (let i = 0; i < post.length; i++){
         if (year == post[i]?.createdAt.getFullYear().toString()) {
             selecteddate.push(post[i].createdAt)
@@ -24,7 +25,7 @@ const resultCurrentYear = function (post: any) {
     for (let i = 0; i < 12; i++){
         let mut: number = 0;
         for (let j = 0; j < post.length; j++){
-            if ((i == post.createdAt[j].getMonth()) && (new Date().getFullYear() == post.createdAt[j].getFullYear())) {
+            if ((i == post[j]?.createdAt.getMonth()) && (new Date().getFullYear() == post[j].createdAt.getFullYear())) {
                 mut++
             }
         }

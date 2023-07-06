@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
-import { resultByYear, resultCurrentYear } from "./result-by-year"
+import { resultByYear, resultCurrentYear } from "../utils/result-by-year"
 import ExpressError from "../utils/ExpressError"
 dotenv.config()
 const prisma = new PrismaClient()
@@ -13,6 +13,14 @@ interface GetUserRequest extends Request {
 }
 
 //GET REQUEST
+const GetAdmin =async (req: Request, res: Response, next: NextFunction) => {
+    const count = await prisma.admin.count()
+    if (count > 0) {
+        return next(new ExpressError(400, "There is already admin account registered"))
+    }
+    res.status(200).json({success_message: "Look like there is no admin account registered"})
+}
+
 const Profile = async (req: Request, res: Response, next: NextFunction) => {
     const id = (req as GetUserRequest).user
     const profile = await prisma.admin.findUnique({where: { id: id}})
@@ -21,7 +29,8 @@ const Profile = async (req: Request, res: Response, next: NextFunction) => {
     })
 }
 //Dashboard Multiple Data/Queuery Request
-const DashboardData =async (req: Request, res: Response, next: NextFunction) => {
+const DashboardData = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("Huttt")
     const [alarmPost, alarmTake10, alarmCount] = await prisma.$transaction(
         [
             prisma.alarm.findMany({orderBy: {createdAt: "asc"}}),
@@ -36,12 +45,13 @@ const DashboardData =async (req: Request, res: Response, next: NextFunction) => 
             prisma.report.count()
         ]
     )
-    const alarmPostFinal = resultCurrentYear(alarmPost)
+
+    const alarmPostFinal =  resultCurrentYear(alarmPost)
     const reportPostFinal = resultCurrentYear(reportPost)
     res.status(200).json({
         results:{
             alarm:{
-                alarmPost: alarmPostFinal,
+               alarmPost: alarmPostFinal,
                 alarmTake10: alarmTake10,
                 alarmCount: alarmCount
             },
@@ -354,6 +364,7 @@ const DeleteTeam =async (req: Request, res: Response, next: NextFunction) => {
 
 export {
     //GET
+    GetAdmin,
     Profile,
     DashboardData,
     OverviewDevice,

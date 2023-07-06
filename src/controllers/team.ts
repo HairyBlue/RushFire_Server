@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
-import { resultByYear, resultCurrentYear } from "./result-by-year"
+import { resultByYear, resultCurrentYear } from "../utils/result-by-year"
 import ExpressError from "../utils/ExpressError"
 dotenv.config()
 const prisma = new PrismaClient()
