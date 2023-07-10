@@ -17,6 +17,7 @@ import {
     OverviewAlarm,
     ManageAlarmRequest,
     TeamToCoAdmin,
+    CoAdminToTeam,
     OverviewReport,
     ManageReportRequest,
     DeleteReport,
@@ -42,7 +43,9 @@ router.post("/register-device", verifyJWT, CatchAsync(RegisterDevice))
 //PUT
 router.put("/profile", verifyJWT, CatchAsync(UpdateProfile))
 router.put("/device", verifyJWT, CatchAsync(UpdateDevice))
-router.put("/team-to-coadmin", verifyJWT, CatchAsync(TeamToCoAdmin))
+
+router.patch("/team-to-coadmin", verifyJWT, CatchAsync(TeamToCoAdmin))
+router.patch("/coadmin-to-team", verifyJWT, CatchAsync(CoAdminToTeam))
 //DELETE
 router.delete("/device", verifyJWT, CatchAsync(DeleteDevice))
 router.delete("/alarm", verifyJWT, CatchAsync(DeleteAlarm))

@@ -264,9 +264,9 @@ const Login = async (req: Request, res: Response, next: NextFunction) => {
     if (isexist.length == 0) { return next(new ExpressError(400, "Invalid credendtials")) }
     const ispassword = await bcrypt.compare(password, isexist[0]?.password)
     if (!ispassword) { return next(new ExpressError(400, "Invalid credendtials")) }
-    const access_token = jwt.sign({id: isexist[0]?.id, isCoAdmin: isexist[0]?.isCoAdmin}, process.env.ACCESS_TOKEN as string)
+    const access_token = jwt.sign({id: isexist[0]?.id, role: isexist[0]?.isCoAdmin ? "CoAdmin": "Team"}, process.env.ACCESS_TOKEN as string)
 
-    res.status(200).json({succes_message: "You have succesfully login", id: isexist[0]?.id, token: access_token})
+    res.status(200).json({succes_message: "You have succesfully login", token: access_token})
 }
 
 const RegisterDevice = async (req: Request, res: Response, next: NextFunction) => {

@@ -243,8 +243,6 @@ const Team =async (req: Request, res: Response, next: NextFunction) => {
 //POST REQUEST
 const SignUp = async (req: Request, res: Response, next: NextFunction) => {
     type Gender = "Male" | "Female" | "Rather not to say"
-    const count = await prisma.admin.count()
-    if (count > 0) {return next(new ExpressError(400, "Admin account has already been created"))}
     const { name, birthyear, gender,contact, email, username, password } = req.body
     const isGender: Gender = gender
     const hashedpwd = await bcrypt.hash(password, 10)
@@ -273,12 +271,12 @@ const Login = async (req: Request, res: Response, next: NextFunction) => {
            ]
         }
     })
-    if (isexist.length == 0) { return next(new ExpressError(400, "Invalid credendtials")) }
+    if (isexist.length == 0) { return next(new ExpressError(400, "Invalid credentials")) }
     const ispassword = await bcrypt.compare(password, isexist[0]?.password)
-    if (!ispassword) { return next(new ExpressError(400, "Invalid credendtials")) }
-    const access_token = jwt.sign({id: isexist[0]?.id}, process.env.ACCESS_TOKEN as string)
+    if (!ispassword) { return next(new ExpressError(400, "Invalid credentials")) }
+    const access_token = jwt.sign({id: isexist[0]?.id, role: "Admin"}, process.env.ACCESS_TOKEN as string)
 
-    res.status(200).json({succes_message: "You have succesfully login", id: isexist[0]?.id, token: access_token})
+    res.status(200).json({succes_message: "You have succesfully login", token: access_token})
 }
 
 const RegisterDevice = async (req: Request, res: Response, next: NextFunction) => {
@@ -335,6 +333,17 @@ const TeamToCoAdmin =async (req: Request, res: Response, next: NextFunction) => 
         }
     })
 }
+const CoAdminToTeam =async (req: Request, res: Response, next: NextFunction) => {
+    const {id} = req.params
+    await prisma.team.update({
+        where: {
+            id: id
+        },
+        data: {
+            isCoAdmin: false
+        }
+    })
+}
 //DELETE
 const DeleteDevice = async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.params;
@@ -383,6 +392,7 @@ export {
     UpdateProfile,
     UpdateDevice,
     TeamToCoAdmin,
+    CoAdminToTeam,
     //DELETE
     DeleteDevice,
     DeleteAlarm,
