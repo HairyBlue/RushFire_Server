@@ -30,7 +30,6 @@ const Profile = async (req: Request, res: Response, next: NextFunction) => {
 }
 //Dashboard Multiple Data/Queuery Request
 const DashboardData = async (req: Request, res: Response, next: NextFunction) => {
-    console.log("Huttt")
     const [alarmPost, alarmTake10, alarmCount] = await prisma.$transaction(
         [
             prisma.alarm.findMany({orderBy: {createdAt: "asc"}}),
@@ -45,6 +44,9 @@ const DashboardData = async (req: Request, res: Response, next: NextFunction) =>
             prisma.report.count()
         ]
     )
+    const deviceCount = await prisma.device.count()
+    const usercount = await prisma.citizen.count()
+
 
     const alarmPostFinal =  resultCurrentYear(alarmPost)
     const reportPostFinal = resultCurrentYear(reportPost)
@@ -59,6 +61,10 @@ const DashboardData = async (req: Request, res: Response, next: NextFunction) =>
                 reportPost: reportPostFinal,
                 reportTake10: reportTake10,
                 reportCount: reportCount
+            },
+            others: {
+                deviceCount: deviceCount,
+                usercount: usercount
             }
         }
     })
@@ -231,12 +237,12 @@ const Team =async (req: Request, res: Response, next: NextFunction) => {
    if(order == "asc"){
         teamPost = await prisma.team.findMany({skip: toSkip,take: perPage, orderBy: {createdAt: "asc"}, where: {name: {contains: `${searches}%`}}})
    }
-    const teamCount = await prisma.citizen.count()
+    const teamCount = await prisma.team.count()
     const pageCount = Math.ceil(teamCount/perPage)
     res.status(200).json({
         results: {
-            citizenPost: teamPost, 
-            citizenCount: teamCount, 
+            teamPost: teamPost, 
+            teamCount: teamCount, 
             pageCount: pageCount
         }})
 }

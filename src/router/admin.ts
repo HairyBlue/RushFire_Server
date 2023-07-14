@@ -42,14 +42,14 @@ router.post("/register-device", verifyJWT, CatchAsync(RegisterDevice))
 
 //PUT
 router.put("/profile", verifyJWT, CatchAsync(UpdateProfile))
-router.put("/device", verifyJWT, CatchAsync(UpdateDevice))
+router.put("/device/:id", verifyJWT, CatchAsync(UpdateDevice))
 
-router.patch("/team-to-coadmin", verifyJWT, CatchAsync(TeamToCoAdmin))
-router.patch("/coadmin-to-team", verifyJWT, CatchAsync(CoAdminToTeam))
+router.patch("/team-to-coadmin/:id", verifyJWT, CatchAsync(TeamToCoAdmin))
+router.patch("/coadmin-to-team/:id", verifyJWT, CatchAsync(CoAdminToTeam))
 //DELETE
-router.delete("/device", verifyJWT, CatchAsync(DeleteDevice))
-router.delete("/alarm", verifyJWT, CatchAsync(DeleteAlarm))
-router.delete("/citizen", verifyJWT, CatchAsync(DeleteCitizen))
-router.delete("/report", verifyJWT, CatchAsync(DeleteReport))
-router.delete("/team", verifyJWT, CatchAsync(DeleteTeam))
+router.delete("/device/:id", verifyJWT, CatchAsync(DeleteDevice))
+router.delete("/alarm/:id", verifyJWT, CatchAsync(DeleteAlarm))
+router.delete("/citizen/:id", verifyJWT, CatchAsync(DeleteCitizen))
+router.delete("/report/:id", verifyJWT, CatchAsync(DeleteReport))
+router.delete("/team/:id", verifyJWT, CatchAsync(DeleteTeam))
 export default router;

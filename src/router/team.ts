@@ -38,12 +38,12 @@ router.post("/login", CatchAsync(Login))
 router.post("/register-device", verifyJWT, CatchAsync(RegisterDevice))
 
 //PUT
-router.put("/profile", verifyJWT, CatchAsync(UpdateProfile))
-router.put("/device", verifyJWT, CatchAsync(UpdateDevice))
+router.put("/profile/:id", verifyJWT, CatchAsync(UpdateProfile))
+router.put("/device/:id", verifyJWT, CatchAsync(UpdateDevice))
 
 //DELETE
-router.delete("/device", verifyJWT, CatchAsync(DeleteDevice))
-router.delete("/alarm", verifyJWT, CatchAsync(DeleteAlarm))
-router.delete("/report", verifyJWT, CatchAsync(DeleteReport))
-router.delete("/citizen", verifyJWT, CatchAsync(DeleteCitizen))
+router.delete("/device/:id", verifyJWT, CatchAsync(DeleteDevice))
+router.delete("/alarm/:id", verifyJWT, CatchAsync(DeleteAlarm))
+router.delete("/report/:id", verifyJWT, CatchAsync(DeleteReport))
+router.delete("/citizen/:id", verifyJWT, CatchAsync(DeleteCitizen))
 export default router;
