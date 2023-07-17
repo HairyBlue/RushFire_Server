@@ -59,6 +59,8 @@ model Citizen {
 
 model Device {
   id        String   @id @default(uuid())
+  model     String
+  type      String
   serial    String
   address   String
   coords    String
@@ -70,6 +72,8 @@ model Device {
 
 model Alarm {
   id        String   @id @default(uuid())
+  model     String
+  type      String
   serial    String
   createdAt DateTime @default(now())
 

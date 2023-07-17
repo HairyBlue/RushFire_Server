@@ -8,10 +8,10 @@ const setupSocketIO = (server: http.Server)=> {
     const io = new Server(server)
 
     io.of("/alarm").on("connection", (socket: Socket)=>{
-        socket.on("alarm", async (data)=> {
-            await alarmPost(data)
-            console.log(`Alarm send send by a device serial number: ${data}`)
-            socket.emit("alarm_send", data)
+        socket.on("alarm", async (model, type, serial) => {
+            await alarmPost(model, type, serial)
+            console.log(`Alarm send send by a device serial number: ${serial}`)
+            socket.emit("alarm_send")
         })
     })
     io.of("/report").on("connection", (socket: Socket)=>{
@@ -22,9 +22,11 @@ const setupSocketIO = (server: http.Server)=> {
     })
 }
 
-async function alarmPost(serial: any){
+async function alarmPost(model:any, type:any, serial: any){
     await prisma.alarm.create({
         data: {
+            model: model,
+            type: type,
             serial: serial
         }
     })

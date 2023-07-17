@@ -47,7 +47,6 @@ const DashboardData = async (req: Request, res: Response, next: NextFunction) =>
     const deviceCount = await prisma.device.count()
     const usercount = await prisma.citizen.count()
 
-
     const alarmPostFinal =  resultCurrentYear(alarmPost)
     const reportPostFinal = resultCurrentYear(reportPost)
     res.status(200).json({
@@ -286,9 +285,11 @@ const Login = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const RegisterDevice = async (req: Request, res: Response, next: NextFunction) => {
-    const {serial, address, coords} = req.body
+    const {model, type, serial, address, coords} = req.body
     await prisma.device.create({
         data: {
+            model: model,
+            type: type,
             serial: serial,
             address: address,
             coords: coords
