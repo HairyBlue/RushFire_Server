@@ -15,6 +15,7 @@ import {
     DeleteCitizen,
     OverviewAlarm,
     ManageAlarmRequest,
+    ViewEachDevice,
     OverviewReport,
     ManageReportRequest,
     DeleteReport
@@ -29,6 +30,7 @@ router.get("/overview-device", CatchAsync(OverviewDevice))
 router.get("/manage-device", CatchAsync(ManageDeviceRequest))
 router.get("/overview-alarm", CatchAsync(OverviewAlarm))
 router.get("/manage-alarm", CatchAsync(ManageAlarmRequest))
+router.get("/view-each-device", CatchAsync(ViewEachDevice))
 router.get("/overview-report", CatchAsync(OverviewReport))
 router.get("/manage-report", CatchAsync(ManageReportRequest))
 

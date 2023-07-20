@@ -141,6 +141,19 @@ const ManageAlarmRequest =async (req: Request, res: Response, next: NextFunction
             pageCount: pageCount
         }})
 }
+const ViewEachDevice = async (req: Request, res: Response, next: NextFunction) => {
+    const { deviceId } = req.query as any;
+    const deviceInfo = await prisma.device.findUnique({
+        where: {
+            id: deviceId 
+        }
+    })
+    res.status(200).json({
+        results: {
+            deviceInfo: deviceInfo
+        }
+    })
+}
 
 //Report
 const OverviewReport =async (req: Request, res: Response, next: NextFunction) => {
@@ -344,6 +357,7 @@ export {
     ManageDeviceRequest,
     OverviewAlarm,
     ManageAlarmRequest,
+    ViewEachDevice,
     OverviewReport,
     ManageReportRequest,
     Citizen,

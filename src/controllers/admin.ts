@@ -126,6 +126,9 @@ const OverviewAlarm =async (req: Request, res: Response, next: NextFunction) => 
     )
     const pageCount = Math.ceil(alarmCount/perPage)
     const alarmPostFinal = resultByYear(alarmPost, year as string)
+
+
+    //TODO: Reduce to filter same year for page count
     res.status(200).json({
         results: {
             alarmPost: alarmPostFinal, 
@@ -155,6 +158,20 @@ const ManageAlarmRequest =async (req: Request, res: Response, next: NextFunction
             alarmCount: alarmCount, 
             pageCount: pageCount
         }})
+}
+
+const ViewEachDevice = async (req: Request, res: Response, next: NextFunction) => {
+    const { deviceId } = req.query as any;
+    const deviceInfo = await prisma.device.findUnique({
+        where: {
+            id: deviceId 
+        }
+    })
+    res.status(200).json({
+        results: {
+            deviceInfo: deviceInfo
+        }
+    })
 }
 
 //Report
@@ -387,6 +404,7 @@ export {
     ManageDeviceRequest,
     OverviewAlarm,
     ManageAlarmRequest,
+    ViewEachDevice,
     OverviewReport,
     ManageReportRequest,
     Citizen,

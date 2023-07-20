@@ -75,6 +75,7 @@ model Alarm {
   model     String
   type      String
   serial    String
+  deviceId  String
   createdAt DateTime @default(now())
 
   @@index([createdAt])
