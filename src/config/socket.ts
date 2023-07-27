@@ -5,11 +5,15 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 const setupSocketIO = (server: http.Server)=> {
-    const io = new Server(server)
+    const io = new Server(server, {
+        cors: {
+            origin: "*"
+        }
+    })
 
     io.of("/alarm").on("connection", (socket: Socket)=>{
-        socket.on("alarm", async (model, type, serial, deviceId) => {
-            await alarmPost(model, type, serial, deviceId)
+        socket.on("alarm", async ({ model, type, serial, deviceId }) => {
+            // await alarmPost(model, type, serial, deviceId)
             console.log(`Alarm send send by a device serial number: ${serial}`)
             socket.emit("alarm_send")
         })
