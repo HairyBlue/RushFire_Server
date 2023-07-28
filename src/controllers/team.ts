@@ -36,6 +36,9 @@ const DashboardData =async (req: Request, res: Response, next: NextFunction) => 
             prisma.report.count()
         ]
     )
+    const deviceCount = await prisma.device.count()
+    const userCount = await prisma.citizen.count()
+
     const alarmPostFinal = resultCurrentYear(alarmPost)
     const reportPostFinal = resultCurrentYear(reportPost)
     res.status(200).json({
@@ -49,6 +52,10 @@ const DashboardData =async (req: Request, res: Response, next: NextFunction) => 
                 reportPost: reportPostFinal,
                 reportTake10: reportTake10,
                 reportCount: reportCount
+            },
+            others: {
+                deviceCount: deviceCount,
+                userCount: userCount
             }
         }
     })

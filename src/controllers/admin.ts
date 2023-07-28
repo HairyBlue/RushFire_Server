@@ -45,7 +45,7 @@ const DashboardData = async (req: Request, res: Response, next: NextFunction) =>
         ]
     )
     const deviceCount = await prisma.device.count()
-    const usercount = await prisma.citizen.count()
+    const userCount = await prisma.citizen.count()
 
     const alarmPostFinal =  resultCurrentYear(alarmPost)
     const reportPostFinal = resultCurrentYear(reportPost)
@@ -63,7 +63,7 @@ const DashboardData = async (req: Request, res: Response, next: NextFunction) =>
             },
             others: {
                 deviceCount: deviceCount,
-                usercount: usercount
+                userCount: userCount
             }
         }
     })
@@ -126,7 +126,6 @@ const OverviewAlarm =async (req: Request, res: Response, next: NextFunction) => 
     )
     const pageCount = Math.ceil(alarmCount/perPage)
     const alarmPostFinal = resultByYear(alarmPost, year as string)
-
 
     //TODO: Reduce to filter same year for page count
     res.status(200).json({

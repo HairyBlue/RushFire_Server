@@ -13,7 +13,7 @@ const setupSocketIO = (server: http.Server)=> {
 
     io.of("/alarm").on("connection", (socket: Socket)=>{
         socket.on("alarm", async ({ model, type, serial, deviceId }) => {
-            // await alarmPost(model, type, serial, deviceId)
+            await alarmPost(model, type, serial, deviceId)
             console.log(`Alarm send send by a device serial number: ${serial}`)
             socket.emit("alarm_send")
         })
